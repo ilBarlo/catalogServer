@@ -118,3 +118,43 @@ func getFlavoursByOS(os string) ([]Flavour, error) {
 
 	return flavours, nil
 }
+
+func findMatchingResources(request Request) ([]Flavour, error) {
+	flavours, err := getAllFlavours()
+	if err != nil {
+		return nil, err
+	}
+
+	matchingFlavours := []Flavour{}
+
+	for _, flavour := range flavours {
+		if request.Architecture != "" && request.Architecture != flavour.Architecture {
+			continue
+		}
+		if request.OS != "" && request.OS != flavour.OperatingSystem {
+			continue
+		}
+		if request.CPURequest != "" && request.CPURequest > flavour.CPUOffer {
+			continue
+		}
+		if request.MemoryRequest != "" && request.MemoryRequest > flavour.MemoryOffer {
+			continue
+		}
+		if request.PodsPlan != "" {
+			foundPlan := false
+			for _, plan := range flavour.PodsOffer {
+				if plan.Name == request.PodsPlan && plan.Available {
+					foundPlan = true
+					break
+				}
+			}
+			if !foundPlan {
+				continue
+			}
+		}
+
+		matchingFlavours = append(matchingFlavours, flavour)
+	}
+
+	return matchingFlavours, nil
+}

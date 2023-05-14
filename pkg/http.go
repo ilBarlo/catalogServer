@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/mux"
 )
@@ -16,6 +17,7 @@ func StartHttpServer() {
 
 	// routes definition
 	router.HandleFunc("/api/flavours", getAllFlavoursHandler).Methods("GET")
+	router.HandleFunc("/api/flavours/request", findMatchingResourcesHandler).Methods("GET")
 	router.HandleFunc("/api/flavours/architecture/{architecture}", getFlavoursByArchitectureHandler).Methods("GET")
 	router.HandleFunc("/api/flavours/os/{os}", getFlavoursByOSHandler).Methods("GET")
 
@@ -69,4 +71,29 @@ func getFlavoursByOSHandler(w http.ResponseWriter, r *http.Request) {
 	// Respond with the Flavours as JSON
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(flavours)
+}
+
+func findMatchingResourcesHandler(w http.ResponseWriter, r *http.Request) {
+
+	params := r.URL.Query()
+	// Estrarre i valori dei parametri desiderati dalla mappa "params"
+	request := Request{
+		Architecture:  params.Get("architecture"),
+		OS:            params.Get("os"),
+		CPURequest:    params.Get("cpuRequest"),
+		MemoryRequest: params.Get("memoryRequest"),
+		PodsPlan:      strings.ReplaceAll(params.Get("podsPlan"), "\n", ""),
+	}
+
+	// Retrieve Flavours from MongoDB based on the architecture
+	flavours, err := findMatchingResources(request)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Respond with the Flavours as JSON
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(flavours)
+
 }
