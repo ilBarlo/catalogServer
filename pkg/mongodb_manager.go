@@ -32,6 +32,7 @@ func init() {
 	fmt.Println("Collection istance is ready")
 }
 
+// getAllFlavours gets all the Flavours
 func getAllFlavours() ([]Flavour, error) {
 
 	// Define the filter for the query
@@ -61,6 +62,7 @@ func getAllFlavours() ([]Flavour, error) {
 	return flavours, nil
 }
 
+// getFlavoursByArchitecture gets all the Flavours with a certain Architecture
 func getFlavoursByArchitecture(architecture string) ([]Flavour, error) {
 
 	// Define the filter for the query
@@ -90,6 +92,7 @@ func getFlavoursByArchitecture(architecture string) ([]Flavour, error) {
 	return flavours, nil
 }
 
+// getFlavoursByOS gets all the Flavours with a certain OS
 func getFlavoursByOS(os string) ([]Flavour, error) {
 
 	// Define the filter for the query
@@ -119,6 +122,7 @@ func getFlavoursByOS(os string) ([]Flavour, error) {
 	return flavours, nil
 }
 
+// findMatchingResources gets all the Flavours that fit a specific Request
 func findMatchingResources(request Request) ([]Flavour, error) {
 	flavours, err := getAllFlavours()
 	if err != nil {

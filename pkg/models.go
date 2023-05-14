@@ -1,5 +1,6 @@
 package catalog
 
+// Flavour represents a subset of a node's resources
 type Flavour struct {
 	UID             string `json:"uid"`
 	Architecture    string `json:"architecture"`
@@ -9,12 +10,14 @@ type Flavour struct {
 	PodsOffer       []Plan `json:"podsoffer"`
 }
 
+// PodsPlan represents a plan for which is possibile to have a specific amount of available pods
 type Plan struct {
 	Name      string `json:"name"`
 	Available bool   `json:"available"`
 	Pods      int    `json:"pods"`
 }
 
+// Request represents a request to match specific Flavours
 type Request struct {
 	Architecture  string `json:"architecture"`
 	OS            string `json:"os"`
